@@ -58,7 +58,7 @@ async function processCommand(receivedMessage) {
     }
     else if (primaryCommand === "ping")
     {
-        ping(receivedMessage);
+        await ping(receivedMessage);
     }
     else if (primaryCommand === "8ball")
     {
@@ -146,7 +146,7 @@ function giveCompliment(receivedMessage) {
         "You're more loved than you think :)",
         "No matter what, things will work out eventually.",
         "Be you. Always.",
-        "Hey sunshine :)"
+        "Hey sexy :)"
     ];
 
     const index = Math.floor(Math.random() * compliments.length - 1);
@@ -169,7 +169,7 @@ async function clearChat(receivedMessage, commandArguments) {
         receivedMessage.channel.send("The amount should be more than 1!");
     }
     else {
-        await receivedMessage.channel.messages.fetch({limit: amount})
+        await receivedMessage.channel.messages.fetch({limit: amount + 1})
             .then(messages => {
                 messages.forEach(message => {
                     message.delete()
@@ -180,8 +180,11 @@ async function clearChat(receivedMessage, commandArguments) {
     }
 }
 
-function ping(receivedMessage) {
-    receivedMessage.channel.send("pong lmao");
+async function ping(receivedMessage) {
+    const now = Date.now();
+    await receivedMessage.channel.send("pong lmao");
+
+    receivedMessage.channel.send("jk lol, your ping is " + (receivedMessage.createdTimestamp - now) + "ms");
 }
 
 function eight_ball(receivedMessage, commandArguments) {
