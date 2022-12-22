@@ -1,6 +1,12 @@
 # Simple Discord bot coded in JavaScript
 
 ## Setting up
+To start, run the 
+```bash
+$ npm install
+```
+command to install the necessary packages.
+
 To set up the bot, simply create a .env file in the same folder.
 <br>
 In this file, put `TOKEN=token_here` (without "" or similar)
@@ -10,9 +16,9 @@ Example: TOKEN=abc123
 ## Running the bot
 To run the bot, simply run
 ```bash
-$ node bot.js
+$ npm start
 ```
-in a terminal. A message `Connected` will show when the bot is connected.
+in a terminal and the server will start. Whenever you make changes to the server, it will automatically restart, thanks to the `nodemon` package. A message `Connected` will show when the bot is connected.
 
 ## Prefix
 Default prefix: `;` <br>
