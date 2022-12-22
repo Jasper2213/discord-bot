@@ -1,15 +1,30 @@
 {
-	"name": "Derry",
-	"version": "1.0.0",
-	"description": "Jerry was unavailable...",
-	"main": "bot.js",
-	"author": "Not Jerry",
-	"depoendencies": {},
-	"dependencies": {
-		"bot.js": "0.0.1",
-		"discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
-		"discord.js": "^12.2.0",
-		"dotenv": "^16.0.0",
-		"winston": "^3.3.3"
-	}
+  "name": "derry",
+  "version": "1.0.0",
+  "description": "Jerry was unavailable...",
+  "main": "bot.js",
+  "author": "Not Jerry",
+  "depoendencies": {},
+  "dependencies": {
+    "bot.js": "0.0.1",
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "discord.js": "^12.2.0",
+    "dotenv": "^16.0.0",
+    "nodemon": "^2.0.20",
+    "winston": "^3.3.3"
+  },
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jasper2213/discord-bot.git"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jasper2213/discord-bot/issues"
+  },
+  "homepage": "https://github.com/Jasper2213/discord-bot#readme"
 }
