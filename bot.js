@@ -15,13 +15,13 @@ client.on('ready', () => {
 
 });
 
-client.on('message', (receivedMessage) => {
+client.on('message', async (receivedMessage) => {
      // Prevent bot from responding to its own messages
     if (receivedMessage.author !== client.user)
     {
         if (receivedMessage.content.startsWith(prefix))
         {
-            processCommand(receivedMessage);
+            await processCommand(receivedMessage);
         }
         else if (receivedMessage.content.toLowerCase() === "thanks derry" || receivedMessage.content.toLowerCase() === "thank you derry")
         {
@@ -30,13 +30,14 @@ client.on('message', (receivedMessage) => {
     }
 });
 
-function processCommand(receivedMessage) {
+async function processCommand(receivedMessage) {
     const fullCommand = receivedMessage.content.substr(1);    // Remove the prefix
     const splitCommand = fullCommand.split(" ");           // Split the message up in to pieces for each space
     const primaryCommand = splitCommand[0];                        // The first word directly after the prefix is the command
     const commandArguments = splitCommand.slice(1);                // All other words are arguments/parameters/options for the command
 
     console.log("Command received: " + primaryCommand);
+    console.log("From:", receivedMessage.author.username + "#" + receivedMessage.author.discriminator);
     console.log("Arguments: " + commandArguments);                 // There may not be any arguments
 
     if (primaryCommand === "restart")
@@ -53,7 +54,7 @@ function processCommand(receivedMessage) {
     }
     else if (primaryCommand === "clear")
     {
-        clearChat(receivedMessage, commandArguments);
+        await clearChat(receivedMessage, commandArguments);
     }
     else if (primaryCommand === "ping")
     {
@@ -62,10 +63,6 @@ function processCommand(receivedMessage) {
     else if (primaryCommand === "8ball")
     {
         eight_ball(receivedMessage, commandArguments);
-    }
-    else if (primaryCommand === "attention")
-    {
-        need_attention(receivedMessage, commandArguments);
     }
     else if (primaryCommand === "annoy")
     {
@@ -131,11 +128,6 @@ function helpCommand(receivedMessage) {
         output += command + " => " + possibleCommands[command] + "\n";
     }
 
-    if (receivedMessage.author.id === "553355440428417045" || receivedMessage.author.id === "299970856275279873")
-    {
-        output += "attention [amount] => Get Derry to send you attention when you need it <3";
-    }
-
     output += "```";
 
     receivedMessage.channel.send(output);
@@ -161,32 +153,30 @@ function giveCompliment(receivedMessage) {
     receivedMessage.channel.send(compliments[index]);
 }
 
-function clearChat(receivedMessage, commandArguments) {
+async function clearChat(receivedMessage, commandArguments) {
     const amount = commandArguments[0];
 
-    if (!amount)
-    {
+    if (!amount) {
         receivedMessage.channel.send("Please fill in a number!");
     }
-    else if (isNaN(amount))
-    {
+    else if (isNaN(amount)) {
         receivedMessage.channel.send("That isn't a number dumbass");
     }
-    else if (amount > 100)
-    {
+    else if (amount > 100) {
         receivedMessage.channel.send("The amount shouldn't be bigger than 100!");
     }
-    else if (amount < 1)
-    {
+    else if (amount < 1) {
         receivedMessage.channel.send("The amount should be more than 1!");
     }
-    else
-    {
-        receivedMessage.channel.messages.fetch({ limit: amount }).then(messages => {
-            receivedMessage.channel.bulkDelete(messages);
-
-            receivedMessage.channel.send(amount + " messages have been cleared!");
-        })
+    else {
+        await receivedMessage.channel.messages.fetch({limit: amount})
+            .then(messages => {
+                messages.forEach(message => {
+                    message.delete()
+                        .catch(() => receivedMessage.channel.send("Cannot clear more messages."));
+                });
+            })
+            .then(() => receivedMessage.channel.send(amount + " messages have been cleared!"));
     }
 }
 
@@ -198,7 +188,7 @@ function eight_ball(receivedMessage, commandArguments) {
     const reply = Math.floor(Math.random() * 4);
     let output = null;
 
-    if (arguments === "")
+    if (!commandArguments[0])
     {
         output = "Please ask a question.";
     }
@@ -227,56 +217,12 @@ function eight_ball(receivedMessage, commandArguments) {
     receivedMessage.channel.send(output);
 }
 
-function need_attention(receivedMessage, commandArguments) {
-    const amount = commandArguments;
-    const love =  [
-                    "Jasper loves you very much. Although he may not always show it, he loves you no matter what :)",
-                    "Jasper will always love you.",
-                    "Your boyfriend loves you to the E&J star and back",
-                    "Jasper thinks you're the absolute best",
-                    "Jasper wants you to know you're gorgeous :)",
-                    "Your bf will always be by your side, even if you're 555 miles away",
-                    "Jasper wants to marry you",
-                    "He wants to have kids with you",
-                    "Jasper badly wants to kiss you",
-                    "Jasper wants to have chill days with you and watch movies all day and have sleepy kisses",
-                    "Being with you is the best thing that ever happened to Jasper",
-                    "You genuinely mean the world to him",
-                    "He wants you to know how pretty you really are",
-                    "You're perfect.",
-                    "Thinking about you makes Jasper smile a damn lot",
-                    "Jasper is so lucky to be dating you",
-                    "Jasper can't stop thinking about you",
-                    "You make him so happy",
-                    "Jasper wants to cuddle with you",
-                    "He never ever wants to be with anyone else but you",
-                    "Jasper is actually so proud of you for who you are and what you've done so far",
-                    "If he could, Jasper would be at your place 24/7",
-                    "Jasper secretly always misses you.",
-                    "He listens to music that reminds him of you when he misses you too much",
-                    "You're on his mind 24/7"
-                ];
-
-    // amount.length because amount is []
-    // [] (array) is considered an object, which is truthy
-    // amount.length returns 0 if no amount is given
-    // !! Don't interpret this as which number amount gives (amount.length will either be 0 or 1) !!
-    if (amount.length !== 0)
-    {
-        for (let i = 0; i < amount; i++)
-        {
-            const index = Math.floor(Math.random() * love.length);
-            receivedMessage.channel.send((i + 1) + ": " + love[index]);
-        }
-    }
-    else
-    {
-        const index = Math.floor(Math.random() * love.length);
-        receivedMessage.channel.send(love[index]);
-    }
-}
-
 function setPrefix(receivedMessage, commandArguments) {
-    prefix = commandArguments[0];
-    receivedMessage.channel.send("Prefix updated! New prefix is now: **" + prefix + "**");
+    if (commandArguments[0]) {
+        prefix = commandArguments[0];
+        receivedMessage.channel.send("Prefix updated! New prefix is now: **" + prefix + "**");
+    }
+    else {
+        receivedMessage.channel.send("Please provide a new prefix.");
+    }
 }
